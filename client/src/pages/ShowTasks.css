@@ -1,0 +1,103 @@
+.task-container {
+  padding: 15px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  cursor: grab;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
+  border-radius: 10px;
+  width: 80%;
+  margin: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.task-container h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  text-align: center; /* Center the header */
+}
+
+.task-container p {
+  margin: 5px 0;
+  color: #333;
+  word-wrap: break-word;
+  border-top: 1px solid #ccc; /* Add a line between content and header */
+  padding-top: 10px; /* Add some padding to separate the line from the text */
+}
+
+.task-container p:last-child {
+  padding-bottom: 10px; /* Add some padding to separate the line from the text */
+}
+
+li {
+  list-style-type: none;
+}
+
+.tools {
+  display: flex;
+  gap: 10px;
+}
+
+.tools > .btn-edit:hover {
+  background-color: #00cc00;
+}
+
+.tools > .btn-delete {
+  margin-left: auto;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: px;
+  cursor: pointer;
+}
+
+.tools > .btn-complete {
+  background-color: #4dcf4d;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+li:active .task-container {
+  cursor: grabbing;
+  background-color: #f0f0f0;
+}
+
+li.over .task-container {
+  border: 1px dashed #666;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay-content {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  width: 500px;
+  max-width: 100%;
+}
