@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { BackendApi } from '../BackendApi';
 import './CreateTask.css';
 
 class CreateTask extends Component {
   constructor(props) {
     super(props);
+    this.api = new BackendApi();
     let date = new Date();
     let options = {
       timeZone: 'Asia/Jerusalem',
@@ -12,13 +14,14 @@ class CreateTask extends Component {
       day: '2-digit',
     };
     let formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
-    formattedDate = formattedDate.split('/').reverse().join('-'); // Convert to YYYY-MM-DD format
+    formattedDate = formattedDate.split('/').reverse().join('-');
 
     this.state = {
       task: {
+        id: props.task ? props.task.id : undefined,
         title: props.task ? props.task.title : '',
         description: props.task ? props.task.description : '',
-        dueDate: formattedDate,
+        due_date: formattedDate,
       },
     };
   }
@@ -44,16 +47,44 @@ class CreateTask extends Component {
     });
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
+    const SERVER_URL = process.env.REACT_APP_API_URL;
+    console.log('server url: ', SERVER_URL);
+
     e.preventDefault();
-    // Logic to save the task
-    if (this.props.onClose) {
-      this.props.onClose();
+    const { title, description, due_date } = this.state.task;
+    console.log(title, description, due_date);
+    if (title.trim() === '' || description.trim() === '') {
+      console.log('empty');
+      return;
     }
+    try {
+      if (this.props.task && this.props.task.id) {
+        await this.api.updateTask(this.state.task);
+      } else {
+        await this.api.createTask(this.state.task);
+      }
+      console.log('close');
+      if (this.props.onClose) {
+        await this.props.updateTasks();
+        this.props.onClose();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    console.log('end');
+    this.setState({
+      task: {
+        id: undefined,
+        title: '',
+        description: '',
+        due_date: '',
+      },
+    });
   };
 
   render() {
-    const { title, description, dueDate } = this.state.task;
+    const { title, description, due_date } = this.state.task;
     return (
       <div>
         <h1>Create Task</h1>
@@ -75,17 +106,17 @@ class CreateTask extends Component {
             />
             <input
               type="date"
-              name="dueDate"
-              value={dueDate}
+              name="due_date"
+              value={due_date}
               onChange={this.handleChange}
-              className="date-input" // Apply the class
+              className="date-input"
             />
             <button
               type="submit"
               className="form-control-btn"
               onClick={this.handleSubmit}
             >
-              Create Task
+              {this.props.task ? 'Update' : 'Create'} Task
             </button>
           </form>
         </div>

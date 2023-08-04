@@ -1,36 +1,40 @@
 import React, { Component } from 'react';
-import './ShowTasks.css';
 import Task from './CreateTask';
 import CreateTask from './CreateTask';
+import { BackendApi } from '../BackendApi';
+
+import './ShowTasks.css';
+
 class ShowTasks extends Component {
   constructor() {
     super();
+    this.api = new BackendApi();
     this.state = {
       tasks: [
         {
           title: 'Task 1',
           description: 'Description 1',
-          dueDate: '2021-01-01',
+          due_date: '2021-01-01',
         },
         {
           title: 'Task 2',
           description: 'Description 2 ssssssspppssssssssssssssssss',
-          dueDate: '2021-01-02',
+          due_date: '2021-01-02',
         },
         {
           title: 'Task 3',
           description: 'Description 3',
-          dueDate: '2021-01-03',
+          due_date: '2021-01-03',
         },
         {
           title: 'Task 4',
           description: 'Description 4',
-          dueDate: '2021-01-04',
+          due_date: '2021-01-04',
         },
         {
           title: 'Task 5',
           description: 'Description 5',
-          dueDate: '2021-01-05',
+          due_date: '2021-01-05',
         },
       ],
       draggingTask: null,
@@ -38,13 +42,53 @@ class ShowTasks extends Component {
       editingContent: null,
       currentPage: 1,
       tasksPerPage: 5,
-      searchTerm: '',
+      searchTitle: '',
+      searchDescription: '',
+      searchDate: '',
     };
   }
 
-  handleSearchChange = (e) => {
-    this.setState({ searchTerm: e.target.value, currentPage: 1 });
+  componentDidMount() {
+    // fetch tasks from server
+    this.updateTasks();
+  }
+
+  updateTasks = async () => {
+    const tasks = await this.api.getTasks();
+    this.setState({ tasks });
+    this.forceUpdate();
+    console.log('updateTasks: ', tasks);
   };
+
+  handleSearchChangeTitle = (e) => {
+    this.setState({ searchTitle: e.target.value, currentPage: 1 });
+  };
+
+  handleSearchChangeDescription = (e) => {
+    this.setState({ searchDescription: e.target.value, currentPage: 1 });
+  };
+
+  handleSearchChangeDate = (e) => {
+    this.setState({ searchDate: e.target.value, currentPage: 1 });
+  };
+
+  async handleSearch() {
+    console.log('handleSearch');
+    const { searchTitle, searchDescription, searchDate } = this.state;
+    console.log('searchTitle: ', searchTitle);
+    console.log('searchDescription: ', searchDescription);
+    console.log('searchDate: ', searchDate);
+    const tasks = await this.api
+      .searchTasks({
+        title: searchTitle,
+        description: searchDescription,
+        due_date: searchDate,
+      })
+      .then((res) => {
+        console.log('res: ', res);
+        this.setState({ tasks: res });
+      });
+  }
 
   handleNextPage = () => {
     this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
@@ -88,15 +132,18 @@ class ShowTasks extends Component {
     const newTasks = [...this.state.tasks];
     newTasks[this.state.editingTask] = this.state.editingContent;
     this.setState({ tasks: newTasks, editingTask: null, editingContent: null });
-    // send to server the changes
   };
 
   handleComplete = (e) => {
     console.log('Complete');
   };
 
-  handleDelete = (e) => {
+  handleDelete = async (index) => {
     console.log('Delete');
+    const taskId = this.state.tasks[index].id;
+    console.log('Delete task id: ', taskId);
+    await this.api.deleteTask(taskId);
+    this.updateTasks();
   };
 
   handleRemoveOverlay = (e) => {
@@ -133,6 +180,7 @@ class ShowTasks extends Component {
                 onChange={(task) => this.setState({ editingContent: task })}
                 onSave={this.handleSave}
                 onClose={() => this.handleRemoveOverlay()}
+                updateTasks={this.updateTasks}
               />
             </div>
           </div>
@@ -143,22 +191,25 @@ class ShowTasks extends Component {
           <input
             type="text"
             placeholder="Search by title"
-            value={this.state.searchTerm}
-            onChange={this.handleSearchChange}
+            value={this.state.searchTitle}
+            onChange={this.handleSearchChangeTitle}
           />
           <input
             type="text"
             placeholder="Search by description"
-            value={this.state.searchTerm}
-            onChange={this.handleSearchChange}
+            value={this.state.searchDescription}
+            onChange={this.handleSearchChangeDescription}
           />
           <input
-            type="text"
+            type="date"
             placeholder="Search by due date"
-            value={this.state.searchTerm}
-            onChange={this.handleSearchChange}
+            value={this.state.searchDate}
+            onChange={this.handleSearchChangeDate}
           />
         </div>
+        <button className="btn-search" onClick={() => this.handleSearch()}>
+          Search
+        </button>
         <div className="pagination">
           {pageNumbers.map((number) => (
             <button
@@ -193,13 +244,16 @@ class ShowTasks extends Component {
                   >
                     Complete
                   </button>
-                  <button className="btn-delete" onClick={this.handleDelete}>
-                    X
+                  <button
+                    className="btn-delete"
+                    onClick={() => this.handleDelete(index)}
+                  >
+                    Delete Task
                   </button>
                 </div>
                 <h3>{task.title}</h3>
                 <p>{task.description}</p>
-                <p>{task.dueDate}</p>
+                <p>{task.due_date}</p>
               </div>
             </li>
           ))}
