@@ -10,33 +10,7 @@ class ShowTasks extends Component {
     super();
     this.api = new BackendApi();
     this.state = {
-      tasks: [
-        {
-          title: 'Task 1',
-          description: 'Description 1',
-          due_date: '2021-01-01',
-        },
-        {
-          title: 'Task 2',
-          description: 'Description 2 ssssssspppssssssssssssssssss',
-          due_date: '2021-01-02',
-        },
-        {
-          title: 'Task 3',
-          description: 'Description 3',
-          due_date: '2021-01-03',
-        },
-        {
-          title: 'Task 4',
-          description: 'Description 4',
-          due_date: '2021-01-04',
-        },
-        {
-          title: 'Task 5',
-          description: 'Description 5',
-          due_date: '2021-01-05',
-        },
-      ],
+      tasks: [],
       draggingTask: null,
       editingTask: null,
       editingContent: null,
@@ -57,7 +31,6 @@ class ShowTasks extends Component {
     const tasks = await this.api.getTasks();
     this.setState({ tasks });
     this.forceUpdate();
-    console.log('updateTasks: ', tasks);
   };
 
   handleSearchChangeTitle = (e) => {
@@ -73,11 +46,7 @@ class ShowTasks extends Component {
   };
 
   async handleSearch() {
-    console.log('handleSearch');
     const { searchTitle, searchDescription, searchDate } = this.state;
-    console.log('searchTitle: ', searchTitle);
-    console.log('searchDescription: ', searchDescription);
-    console.log('searchDate: ', searchDate);
     const tasks = await this.api
       .searchTasks({
         title: searchTitle,
@@ -85,7 +54,6 @@ class ShowTasks extends Component {
         due_date: searchDate,
       })
       .then((res) => {
-        console.log('res: ', res);
         this.setState({ tasks: res });
       });
   }
@@ -121,7 +89,6 @@ class ShowTasks extends Component {
 
   handleEdit = (index) => {
     const task = this.state.tasks[index];
-    console.log(task);
     this.setState({
       editingTask: index,
       editingContent: task,
@@ -134,14 +101,8 @@ class ShowTasks extends Component {
     this.setState({ tasks: newTasks, editingTask: null, editingContent: null });
   };
 
-  handleComplete = (e) => {
-    console.log('Complete');
-  };
-
   handleDelete = async (index) => {
-    console.log('Delete');
     const taskId = this.state.tasks[index].id;
-    console.log('Delete task id: ', taskId);
     await this.api.deleteTask(taskId);
     this.updateTasks();
   };
@@ -237,12 +198,6 @@ class ShowTasks extends Component {
                     onClick={() => this.handleEdit(index)}
                   >
                     Edit
-                  </button>
-                  <button
-                    className="btn-complete"
-                    onClick={this.handleComplete}
-                  >
-                    Complete
                   </button>
                   <button
                     className="btn-delete"

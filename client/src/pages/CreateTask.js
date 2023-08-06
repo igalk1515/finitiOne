@@ -49,13 +49,10 @@ class CreateTask extends Component {
 
   handleSubmit = async (e) => {
     const SERVER_URL = process.env.REACT_APP_API_URL;
-    console.log('server url: ', SERVER_URL);
 
     e.preventDefault();
     const { title, description, due_date } = this.state.task;
-    console.log(title, description, due_date);
     if (title.trim() === '' || description.trim() === '') {
-      console.log('empty');
       return;
     }
     try {
@@ -64,15 +61,11 @@ class CreateTask extends Component {
       } else {
         await this.api.createTask(this.state.task);
       }
-      console.log('close');
       if (this.props.onClose) {
         await this.props.updateTasks();
         this.props.onClose();
       }
-    } catch (err) {
-      console.log(err);
-    }
-    console.log('end');
+    } catch (err) {}
     this.setState({
       task: {
         id: undefined,

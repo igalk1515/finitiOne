@@ -3,7 +3,6 @@ import axios from 'axios';
 export class BackendApi {
   constructor() {
     const apiUrl = process.env.REACT_APP_API_URL;
-    console.log('API URL:', apiUrl);
     this.api = axios.create({
       baseURL: apiUrl,
     });
@@ -15,8 +14,6 @@ export class BackendApi {
   }
 
   async createTask(task) {
-    console.log('create task');
-    console.log(task);
     if (task.id === undefined) {
       delete task.id;
     }
@@ -35,14 +32,11 @@ export class BackendApi {
   }
 
   async searchTasks(query) {
-    console.log('searchTasks');
-    console.log(query);
     const res = await this.api.get('/tasks/search', {
       params: {
         query,
       },
     });
-    console.log(res);
 
     return res.data;
   }

@@ -19,6 +19,14 @@ return new class extends Migration
             $table->boolean('completed')->default(false);
             $table->timestamps();
         });
+        DB::table('tasks')->insert([
+            ['title' => 'Task 1', 'description' => 'Description for Task 1', 'due_date' => '2023-08-06', 'completed' => false],
+            ['title' => 'Task 2', 'description' => 'Description for Task 2', 'due_date' => '2023-08-07', 'completed' => false],
+            ['title' => 'Task 3', 'description' => 'Description for Task 3', 'due_date' => '2023-08-08', 'completed' => false],
+            ['title' => 'Task 4', 'description' => 'Description for Task 4', 'due_date' => '2023-08-09', 'completed' => false],
+            ['title' => 'Task 5', 'description' => 'Description for Task 5', 'due_date' => '2023-08-10', 'completed' => false],
+            ['title' => 'Task 6', 'description' => 'Description for Task 6', 'due_date' => '2023-08-11', 'completed' => false],
+        ]);
     }
 
     /**
