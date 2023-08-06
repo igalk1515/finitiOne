@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export class BackendApi {
   constructor() {
-    const apiUrl = process.env.REACT_APP_API_URL;
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
     this.api = axios.create({
       baseURL: apiUrl,
     });
